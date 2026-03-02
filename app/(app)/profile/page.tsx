@@ -14,11 +14,14 @@ const PLANS = [
   { id: 'annual', label: 'Annual', price: 'Rs 59,900', duration: 'Annual', desc: 'Save 33% — Equivalent to Rs 4,992/mo', color: '#8b5cf6', gradient: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(139,92,246,0.05))' },
 ]
 
+const WHATSAPP = '+923555233767'
+
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [email, setEmail] = useState('')
   const [showPlans, setShowPlans] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState<typeof PLANS[0] | null>(null)
   const router = useRouter()
   const supabase = createClient()
 
@@ -167,7 +170,7 @@ export default function ProfilePage() {
                 {profile.plan === 'premium' ? (
                   <div style={{ background: C.border, borderRadius: '10px', padding: '11px', color: C.muted, fontSize: '13px', fontWeight: '600' }}>Current Plan</div>
                 ) : (
-                  <button style={{ width: '100%', background: `linear-gradient(135deg, ${plan.color}, ${plan.color}cc)`, color: plan.id === 'monthly' ? '#050d1a' : 'white', fontWeight: '700', padding: '12px', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '14px', letterSpacing: '0.3px' }}>
+                  <button onClick={() => setSelectedPlan(plan)} style={{ width: '100%', background: `linear-gradient(135deg, ${plan.color}, ${plan.color}cc)`, color: plan.id === 'monthly' ? '#050d1a' : 'white', fontWeight: '700', padding: '12px', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '14px', letterSpacing: '0.3px' }}>
                     Get {plan.label} Plan →
                   </button>
                 )}
@@ -196,6 +199,59 @@ export default function ProfilePage() {
           <span style={{ color: '#fca5a5', fontSize: '12px' }}>▶</span>
         </button>
       </div>
+
+      {/* Payment Modal */}
+      {selectedPlan && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', zIndex: 100, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}
+          onClick={e => { if (e.target === e.currentTarget) setSelectedPlan(null) }}>
+          <div style={{ width: '100%', maxWidth: '480px', background: 'linear-gradient(160deg, #0a1628, #071220)', borderRadius: '24px 24px 0 0', padding: '28px 24px 40px', border: '1px solid #0d2137', borderBottom: 'none', position: 'relative' }}>
+            {/* Top line */}
+            <div style={{ position: 'absolute', top: 0, left: '35%', right: '35%', height: '1px', background: `linear-gradient(90deg, transparent, ${selectedPlan.color}, transparent)` }} />
+
+            {/* Drag handle */}
+            <div style={{ width: '40px', height: '4px', borderRadius: '2px', backgroundColor: '#0d2137', margin: '0 auto 24px' }} />
+
+            {/* Header */}
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}>👑</div>
+              <h2 style={{ fontWeight: '800', fontSize: '20px', marginBottom: '4px' }}>Upgrade to Premium</h2>
+              <p style={{ color: '#4a7fa5', fontSize: '13px' }}>Selected: <span style={{ color: selectedPlan.color, fontWeight: '700' }}>{selectedPlan.label} — {selectedPlan.price}</span></p>
+            </div>
+
+            {/* Steps */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+              {[
+                { step: '01', text: 'Send payment via JazzCash / EasyPaisa / Bank Transfer' },
+                { step: '02', text: `Include your Student ID as reference: #${profile.student_id}` },
+                { step: '03', text: 'Contact us on WhatsApp with payment screenshot' },
+                { step: '04', text: 'Your account will be upgraded within 1 hour' },
+              ].map(item => (
+                <div key={item.step} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', background: 'rgba(0,212,255,0.04)', border: '1px solid #0d2137', borderRadius: '12px', padding: '12px 14px' }}>
+                  <span style={{ color: '#00d4ff', fontWeight: '800', fontSize: '12px', flexShrink: 0, marginTop: '1px' }}>{item.step}</span>
+                  <span style={{ color: '#d1d5db', fontSize: '13px', lineHeight: '1.5' }}>{item.text}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* WhatsApp Button */}
+            <a
+              href={`https://wa.me/${WHATSAPP.replace('+', '')}?text=Hi%20Shafy!%20I%20want%20to%20upgrade%20to%20the%20${encodeURIComponent(selectedPlan.label)}%20Plan%20(${encodeURIComponent(selectedPlan.price)}).%20My%20Student%20ID%20is%20%23${profile.student_id}.`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', width: '100%', background: 'linear-gradient(135deg, #25d366, #1ebe57)', color: 'white', fontWeight: '700', padding: '15px', borderRadius: '14px', textDecoration: 'none', fontSize: '16px', marginBottom: '12px' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+              </svg>
+              Contact on WhatsApp
+            </a>
+
+            <button onClick={() => setSelectedPlan(null)}
+              style={{ width: '100%', background: 'transparent', border: '1px solid #0d2137', color: '#4a7fa5', fontWeight: '600', padding: '13px', borderRadius: '14px', cursor: 'pointer', fontSize: '14px' }}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
