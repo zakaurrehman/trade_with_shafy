@@ -3,12 +3,9 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
-type Notification = {
-  id: string
-  message: string
-  is_read: boolean
-  created_at: string
-}
+const C = { bg: '#050d1a', card: '#0a1628', border: '#0d2137', light: '#071220', cyan: '#00d4ff', muted: '#4a7fa5', dim: '#1a3a5a' }
+
+type Notification = { id: string; message: string; is_read: boolean; created_at: string }
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -30,10 +27,6 @@ export default function NotificationsPage() {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
   }
 
-  async function dismiss(id: string) {
-    setNotifications(prev => prev.filter(n => n.id !== id))
-  }
-
   function timeAgo(dateStr: string) {
     const diff = Date.now() - new Date(dateStr).getTime()
     const days = Math.floor(diff / 86400000)
@@ -44,29 +37,29 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div style={{ backgroundColor: '#080d2b', minHeight: '100vh' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', borderBottom: '1px solid #1e2a5a' }}>
-        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '20px' }}>←</button>
-        <span style={{ fontWeight: 'bold', fontSize: '16px' }}>Notifications</span>
+    <div style={{ backgroundColor: C.bg, minHeight: '100vh' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', borderBottom: `1px solid ${C.border}`, background: `linear-gradient(180deg, ${C.card}, ${C.bg})` }}>
+        <button onClick={() => router.back()} style={{ background: 'rgba(0,212,255,0.08)', border: `1px solid ${C.border}`, borderRadius: '10px', width: '34px', height: '34px', color: 'white', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>←</button>
+        <span style={{ fontWeight: '700', fontSize: '16px' }}>Notifications</span>
       </div>
 
-      <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {notifications.length === 0 && (
-          <p style={{ color: '#6b7280', textAlign: 'center', padding: '40px 0' }}>No notifications yet.</p>
+          <div style={{ textAlign: 'center', padding: '48px 0' }}>
+            <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔔</div>
+            <p style={{ color: C.muted, fontSize: '14px' }}>No notifications yet.</p>
+          </div>
         )}
         {notifications.map(n => (
-          <div key={n.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '14px', backgroundColor: n.is_read ? '#0e1535' : '#161e45', borderRadius: '12px', border: '1px solid #1e2a5a' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#080d2b', border: '2px solid #1e2a5a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>🔔</div>
+          <div key={n.id} style={{ background: n.is_read ? `linear-gradient(160deg, ${C.card}, ${C.light})` : `linear-gradient(160deg, #0d1f35, #0a1628)`, borderRadius: '14px', padding: '14px 16px', border: `1px solid ${n.is_read ? C.border : 'rgba(0,212,255,0.2)'}`, display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(0,212,255,0.1)', border: `1px solid rgba(0,212,255,0.2)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '16px' }}>🔔</div>
             <div style={{ flex: 1 }}>
-              <p style={{ fontSize: '13px', color: '#d1d5db', marginBottom: '4px' }}>{n.message}</p>
-              <p style={{ fontSize: '12px', color: '#6b7280' }}>{timeAgo(n.created_at)}</p>
+              <p style={{ fontSize: '13px', color: n.is_read ? '#9ca3af' : '#d1d5db', marginBottom: '4px', lineHeight: '1.6' }}>{n.message}</p>
+              <p style={{ fontSize: '11px', color: C.dim }}>{timeAgo(n.created_at)}</p>
             </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              {!n.is_read && (
-                <button onClick={() => markRead(n.id)} style={{ background: 'none', border: 'none', color: '#22c55e', cursor: 'pointer', fontSize: '18px' }} title="Mark read">✓</button>
-              )}
-              <button onClick={() => dismiss(n.id)} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: '18px' }} title="Dismiss">✕</button>
-            </div>
+            {!n.is_read && (
+              <button onClick={() => markRead(n.id)} style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: '8px', width: '30px', height: '30px', color: '#22c55e', cursor: 'pointer', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</button>
+            )}
           </div>
         ))}
       </div>

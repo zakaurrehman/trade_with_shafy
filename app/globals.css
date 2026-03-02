@@ -1,25 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --navy: #080d2b;
-  --navy-card: #0e1535;
-  --navy-light: #161e45;
-  --gold: #c9a227;
-  --gold-light: #f0b429;
+  --bg: #050d1a;
+  --bg-card: #0a1628;
+  --bg-light: #0d1f35;
+  --border: #0d2137;
+  --cyan: #00d4ff;
+  --cyan-dim: #00a8cc;
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background-color: #080d2b;
+  background-color: #050d1a;
   color: white;
   font-family: Arial, sans-serif;
   overflow-x: hidden;
 }
 
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #080d2b; }
-::-webkit-scrollbar-thumb { background: #c9a227; border-radius: 2px; }
+::-webkit-scrollbar-track { background: #050d1a; }
+::-webkit-scrollbar-thumb { background: #00d4ff; border-radius: 2px; }
 
 @keyframes ticker {
   0% { transform: translateX(0); }
@@ -27,19 +28,24 @@ body {
 }
 .ticker-track {
   display: flex;
-  animation: ticker 30s linear infinite;
+  animation: ticker 35s linear infinite;
   width: max-content;
 }
 
-@keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 1; }
-  100% { transform: scale(1.8); opacity: 0; }
+@keyframes livePulse {
+  0% { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(2); opacity: 0; }
 }
-.live-pulse::before {
-  content: '';
+.live-ring {
   position: absolute;
   inset: 0;
   border-radius: 9999px;
   background: #ef4444;
-  animation: pulse-ring 1.5s ease-out infinite;
+  animation: livePulse 1.5s ease-out infinite;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.3s ease forwards; }

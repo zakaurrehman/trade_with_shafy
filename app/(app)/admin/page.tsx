@@ -99,12 +99,12 @@ export default function AdminPage() {
     loadUsers()
   }
 
-  if (loading) return <div style={{ backgroundColor: '#080d2b', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af' }}>Checking access...</div>
+  if (loading) return <div style={{ backgroundColor: '#050d1a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4a7fa5' }}>Checking access...</div>
   if (!isAdmin) return null
 
-  const inputStyle = { width: '100%', backgroundColor: '#161e45', border: '1px solid #1e2a5a', borderRadius: '8px', padding: '10px 14px', color: 'white', fontSize: '14px', outline: 'none' }
-  const labelStyle = { fontSize: '13px', color: '#9ca3af', marginBottom: '4px', display: 'block' as const }
-  const btnStyle = { backgroundColor: '#c9a227', color: '#080d2b', fontWeight: 'bold' as const, padding: '12px 20px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '14px' }
+    const inputStyle = { width: '100%', backgroundColor: '#071220', border: '1px solid #0d2137', borderRadius: '10px', padding: '10px 14px', color: 'white', fontSize: '14px', outline: 'none' }
+  const labelStyle = { fontSize: '12px', color: '#4a7fa5', marginBottom: '6px', display: 'block' as const, fontWeight: '600' as const, textTransform: 'uppercase' as const, letterSpacing: '0.5px' }
+  const btnStyle = { background: 'linear-gradient(135deg, #00d4ff, #00a8cc)', color: '#050d1a', fontWeight: 'bold' as const, padding: '12px 20px', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '14px' }
 
   const TABS: { id: Tab; label: string }[] = [
     { id: 'research', label: '📊 Research' },
@@ -114,18 +114,18 @@ export default function AdminPage() {
   ]
 
   return (
-    <div style={{ backgroundColor: '#080d2b', minHeight: '100vh' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', borderBottom: '1px solid #1e2a5a' }}>
-        <button onClick={() => router.push('/research')} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '20px' }}>←</button>
-        <span style={{ fontWeight: 'bold', fontSize: '16px' }}>Admin Panel</span>
-        <span style={{ backgroundColor: '#c9a227', color: '#080d2b', fontSize: '11px', fontWeight: 'bold', padding: '2px 8px', borderRadius: '4px' }}>ADMIN</span>
+    <div style={{ backgroundColor: '#050d1a', minHeight: '100vh' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', borderBottom: '1px solid #0d2137', background: 'linear-gradient(180deg, #0a1628, #050d1a)' }}>
+        <button onClick={() => router.push('/research')} style={{ background: 'rgba(0,212,255,0.08)', border: '1px solid #0d2137', borderRadius: '10px', width: '34px', height: '34px', color: 'white', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>←</button>
+        <span style={{ fontWeight: '700', fontSize: '16px' }}>Admin Panel</span>
+        <span style={{ background: 'rgba(0,212,255,0.12)', color: '#00d4ff', border: '1px solid rgba(0,212,255,0.25)', fontSize: '10px', fontWeight: '800', padding: '2px 8px', borderRadius: '4px', letterSpacing: '0.5px' }}>ADMIN</span>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #1e2a5a', overflowX: 'auto' }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid #0d2137', overflowX: 'auto' }}>
         {TABS.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            style={{ padding: '12px 16px', background: 'none', border: 'none', color: tab === t.id ? '#c9a227' : '#6b7280', cursor: 'pointer', fontSize: '13px', fontWeight: tab === t.id ? 'bold' : 'normal', borderBottom: tab === t.id ? '2px solid #c9a227' : '2px solid transparent', whiteSpace: 'nowrap' }}>
+            style={{ padding: '12px 16px', background: 'none', border: 'none', color: tab === t.id ? '#00d4ff' : '#4a7fa5', cursor: 'pointer', fontSize: '13px', fontWeight: tab === t.id ? '700' : 'normal', borderBottom: tab === t.id ? '2px solid #00d4ff' : '2px solid transparent', whiteSpace: 'nowrap' }}>
             {t.label}
           </button>
         ))}
