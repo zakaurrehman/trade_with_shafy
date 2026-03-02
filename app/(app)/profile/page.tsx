@@ -43,6 +43,7 @@ export default function ProfilePage() {
           plan: 'basic',
           payment_status: 'pending',
           is_active: true,
+          role: 'user',
         }
         await supabase.from('profiles').upsert(fallback)
         setProfile(fallback)
