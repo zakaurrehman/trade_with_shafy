@@ -33,8 +33,8 @@ export default function ProfilePage() {
       const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single()
       if (data) {
         setProfile(data)
-      } else if (error?.code === 'PGRST116') {
-        // Row truly does not exist — create it (PGRST116 = no rows found)
+      } else {
+        // Either row missing or RLS error — show a usable default profile
         const fallback: Profile = {
           id: user.id,
           full_name: user.user_metadata?.full_name || '',
@@ -45,7 +45,10 @@ export default function ProfilePage() {
           is_active: true,
           role: 'user',
         }
-        await supabase.from('profiles').insert(fallback)
+        // Only insert if row truly missing (PGRST116)
+        if (error?.code === 'PGRST116') {
+          await supabase.from('profiles').insert(fallback)
+        }
         setProfile(fallback)
       }
       setLoaded(true)
@@ -58,8 +61,7 @@ export default function ProfilePage() {
     router.push('/login'); router.refresh()
   }
 
-  if (!loaded) return <div style={{ backgroundColor: C.bg, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.muted }}>Loading...</div>
-  if (!profile) return <div style={{ backgroundColor: C.bg, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.muted }}>Could not load profile. Please log out and sign in again.</div>
+  if (!loaded || !profile) return <div style={{ backgroundColor: C.bg, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.muted }}>Loading...</div>
 
   const rowItem = (icon: string, label: string, value: React.ReactNode) => (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: `1px solid ${C.border}` }}>
