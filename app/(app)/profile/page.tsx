@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 const C = { bg: '#050d1a', card: '#0a1628', border: '#0d2137', light: '#071220', cyan: '#00d4ff', muted: '#4a7fa5', dim: '#1a3a5a' }
 
-type Profile = { id: string; full_name: string; student_id: string; phone: string; plan: string; payment_status: string; is_active: boolean }
+type Profile = { id: string; full_name: string; student_id: string; phone: string; plan: string; payment_status: string; is_active: boolean; role: string }
 
 const PLANS = [
   { id: 'monthly', label: 'Monthly', price: 'Rs 7,900', duration: 'Monthly', desc: 'Full access — pay monthly, cancel anytime.', color: C.cyan, gradient: 'linear-gradient(135deg, rgba(0,212,255,0.15), rgba(0,212,255,0.05))' },
@@ -177,6 +177,18 @@ export default function ProfilePage() {
               </div>
             ))}
           </div>
+        )}
+
+        {/* Admin Panel - only for admin users */}
+        {profile.role === 'admin' && (
+          <Link href="/admin"
+            style={{ background: 'linear-gradient(160deg, rgba(0,212,255,0.1), rgba(0,212,255,0.05))', borderRadius: '16px', padding: '16px 20px', border: '1px solid rgba(0,212,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', textDecoration: 'none', color: 'white' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(0,212,255,0.15)', border: '1px solid rgba(0,212,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>⚙️</div>
+              <span style={{ fontWeight: '600', fontSize: '14px', color: '#00d4ff' }}>Admin Panel</span>
+            </div>
+            <span style={{ color: '#00d4ff', fontSize: '12px' }}>▶</span>
+          </Link>
         )}
 
         {/* Change Password */}
