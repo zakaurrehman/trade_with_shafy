@@ -33,8 +33,8 @@ export default function ProfilePage() {
       const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single()
       if (data) {
         setProfile(data)
-      } else {
-        // Profile row missing — create it with defaults so page still renders
+      } else if (error?.code === 'PGRST116') {
+        // Row truly does not exist — create it (PGRST116 = no rows found)
         const fallback: Profile = {
           id: user.id,
           full_name: user.user_metadata?.full_name || '',
@@ -45,7 +45,7 @@ export default function ProfilePage() {
           is_active: true,
           role: 'user',
         }
-        await supabase.from('profiles').upsert(fallback)
+        await supabase.from('profiles').insert(fallback)
         setProfile(fallback)
       }
       setLoaded(true)
