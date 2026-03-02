@@ -18,16 +18,33 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [email, setEmail] = useState('')
   const [showPlans, setShowPlans] = useState(false)
+  const [loaded, setLoaded] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) { setLoaded(true); return }
       setEmail(user.email || '')
-      const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
-      setProfile(data)
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+      if (data) {
+        setProfile(data)
+      } else {
+        // Profile row missing — create it with defaults so page still renders
+        const fallback: Profile = {
+          id: user.id,
+          full_name: user.user_metadata?.full_name || '',
+          student_id: 'MFT' + Math.floor(Math.random() * 900000 + 100000),
+          phone: user.user_metadata?.phone || '',
+          plan: 'basic',
+          payment_status: 'pending',
+          is_active: true,
+        }
+        await supabase.from('profiles').upsert(fallback)
+        setProfile(fallback)
+      }
+      setLoaded(true)
     }
     load()
   }, [])
@@ -37,7 +54,8 @@ export default function ProfilePage() {
     router.push('/login'); router.refresh()
   }
 
-  if (!profile) return <div style={{ backgroundColor: C.bg, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.muted }}>Loading...</div>
+  if (!loaded) return <div style={{ backgroundColor: C.bg, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.muted }}>Loading...</div>
+  if (!profile) return <div style={{ backgroundColor: C.bg, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.muted }}>Could not load profile. Please log out and sign in again.</div>
 
   const rowItem = (icon: string, label: string, value: React.ReactNode) => (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: `1px solid ${C.border}` }}>
