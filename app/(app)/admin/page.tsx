@@ -45,7 +45,9 @@ export default function AdminPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/login'); return }
       const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-      if (data?.role !== 'admin') { router.push('/research'); return }
+      // Allow access if role is admin OR if email is the known admin email
+      const isAdminUser = data?.role === 'admin' || user.email === 'shafy@trader.com'
+      if (!isAdminUser) { router.push('/research'); return }
       setIsAdmin(true)
       setLoading(false)
     }
